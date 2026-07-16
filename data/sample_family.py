@@ -1,5 +1,6 @@
 from models.person import Person
 from models.family_tree import FamilyTree
+from music.music_generator import person_to_note
 
 # create sample people
 bob = Person("Bob", 1970)
@@ -15,3 +16,8 @@ alice.add_child(ella)
 alice.add_child(logan)
 
 root = FamilyTree(bob)
+
+# test converting a person to a note
+print(person_to_note(bob, 0))
+print(person_to_note(alice, 1))
+print(person_to_note(ella, 2))
