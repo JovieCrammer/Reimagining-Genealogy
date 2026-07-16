@@ -1,4 +1,5 @@
 from models.person import Person
+from models.family_tree import FamilyTree
 
 # create sample people
 bob = Person("Bob", 1970)
@@ -13,4 +14,4 @@ bob.add_child(summer)
 alice.add_child(ella)
 alice.add_child(logan)
 
-root = bob
+root = FamilyTree(bob)

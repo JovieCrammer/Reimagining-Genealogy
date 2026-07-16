@@ -7,4 +7,14 @@ def print_tree(person, generation=0):
         print_tree(child, generation + 1)
 
 
-print_tree(root)
+def print_generations():
+    generations = root.get_generations()
+    for number, people in enumerate(generations):
+        print(f"Generation{number}")
+
+        for person in people:
+            print(" -", person)
+
+
+print_generations()
+
