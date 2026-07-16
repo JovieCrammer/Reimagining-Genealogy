@@ -552,4 +552,7 @@ pyrightconfig.json
 .history
 .ionide
 
+# Ignore all midi files
+*.mid
+
 # End of https://www.toptal.com/developers/gitignore/api/macos,git,intellij,pycharm,eclipse,visualstudiocode,python,pycharm+all
