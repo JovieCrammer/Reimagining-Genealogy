@@ -2,14 +2,18 @@ from music.note import Note
 
 
 def person_to_note(person, generation):
-    notes = {
-        0: "C1",
-        1: "C2",
-        2: "C3",
-        3: "C4"
-    }
-    pitch = notes.get(generation)
-    return Note(pitch, 1)
+    notes = ["C", "D", "E", "F", "G", "A", "B"]
+
+    # pitch reflects identity (name)
+    pitch = notes[len(person.name) % 7]
+
+    # octave reflects generation
+    octave = generation + 1
+
+    # duration reflects future impact (children)
+    duration = len(person.children) + 1
+
+    return Note(pitch + str(octave), duration)
 
 
 def create_composition(root):
