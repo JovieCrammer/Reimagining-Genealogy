@@ -1,5 +1,6 @@
 from data.sample_family import root
 from music.music_generator import create_composition
+from music.midi_writer import write_midi
 
 
 def print_tree(person, generation=0):
@@ -20,3 +21,5 @@ def print_generations():
 print_generations()
 create_composition(root)
 
+composition = create_composition(root)
+write_midi(composition)
