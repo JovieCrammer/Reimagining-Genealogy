@@ -9,6 +9,7 @@ class Node:
         self.radius = 0
         self.target_radius = 20
         self.growth_speed = 0.2
+        self.visible = False
 
     def update(self):
         if self.radius < self.target_radius:
