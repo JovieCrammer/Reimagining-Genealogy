@@ -8,7 +8,7 @@ def person_to_note(person, generation):
     pitch = notes[len(person.name) % 7]
 
     # octave reflects generation
-    octave = generation + 2
+    octave = generation + 1
 
     # duration reflects future impact (children)
     duration = len(person.children) + 1

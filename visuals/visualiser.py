@@ -12,7 +12,11 @@ class Visualiser:
         self.clock = pygame.time.Clock()
         self.nodes = []
         self.root = root
+        self.node_spread = 150
         self.create_nodes()
+        self.visible_nodes = 0
+        self.last_node_time = pygame.time.get_ticks()
+        self.delay = 800
 
     @staticmethod
     def event_handler():
@@ -22,6 +26,12 @@ class Visualiser:
         return True
 
     def update(self):
+        now = pygame.time.get_ticks()
+
+        if self.visible_nodes < len(self.nodes) and now - self.last_node_time > self.delay:
+            self.visible_nodes += 1
+            self.last_node_time = now
+            
         for node in self.nodes:
             node.update()
 
@@ -41,15 +51,34 @@ class Visualiser:
         pygame.quit()
 
     def create_nodes(self):
-        generations = self.root.get_generations()
-        top_margin = 100
-        spacing = 100
+        self.place_person(
+            self.root.root,
+            self.WIDTH/2,
+            100,
+            self.node_spread
+        )
 
-        for generation_number, people in enumerate(generations):
-            y = top_margin + generation_number * spacing
-            spacing = self.WIDTH/(len(people) + 1)
+    def add_node(self, person, x, y):
+        self.nodes.append(Node(person, x, y))
 
-            for person_number, person in enumerate(people):
-                x = spacing * (person_number + 1)
-                self.nodes.append(Node(person, x, y))
+    def place_person(self, person, x, y, node_spread):
+        self.add_node(person, x, y)
+        children = person.children
+
+        if not children:
+            return
+
+        child_y = y + 100
+        num_children = len(children)
+
+        for i, child in enumerate(children):
+            child_x = x + (i - (num_children-1)/2) * node_spread
+
+            self.place_person(
+                child,
+                child_x,
+                child_y,
+                node_spread
+            )
+
 

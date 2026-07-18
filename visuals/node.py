@@ -1,5 +1,6 @@
 import pygame
 
+
 class Node:
     def __init__(self, person, x, y):
         self.person = person
@@ -20,3 +21,11 @@ class Node:
             (int(self.x), int(self.y)),
             int(self.radius)
         )
+
+        font = pygame.font.Font(None, 24)
+
+        text = font.render(self.person.name, True, (255, 255, 255,), (0, 0, 0))
+
+        text_rect = text.get_rect(center=(self.x, self.y + 30))
+
+        screen.blit(text, text_rect)

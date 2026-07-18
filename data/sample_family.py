@@ -6,14 +6,16 @@ from music.music_generator import person_to_note
 bob = Person("Bob", 1970)
 alice = Person("Alice", 1995)
 summer = Person("Summer", 2003)
-ella = Person("Ella", 2006)
+ella = Person("Ella", 2000)
 logan = Person("Logan", 2011)
+kent = Person("Kent", 2025)
 
 # create sample family relationships
 bob.add_child(alice)
 bob.add_child(summer)
 alice.add_child(ella)
 alice.add_child(logan)
+ella.add_child(kent)
 
 root = FamilyTree(bob)
 
