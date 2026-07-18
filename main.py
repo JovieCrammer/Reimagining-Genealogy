@@ -25,5 +25,5 @@ create_composition(root)
 composition = create_composition(root)
 write_midi(composition)
 
-visualiser = Visualiser(1000, 800)
+visualiser = Visualiser(1000, 800, root)
 visualiser.run()

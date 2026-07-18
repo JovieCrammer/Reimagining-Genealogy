@@ -3,7 +3,7 @@ from visuals.node import Node
 
 
 class Visualiser:
-    def __init__(self, WIDTH, HEIGHT):
+    def __init__(self, WIDTH, HEIGHT, root):
         pygame.init()
         pygame.display.set_caption("Reimagining Genealogy")
         self.WIDTH = WIDTH
@@ -11,7 +11,8 @@ class Visualiser:
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.clock = pygame.time.Clock()
         self.nodes = []
-        self.nodes.append(Node(None, self.WIDTH/2, self.HEIGHT/2))
+        self.root = root
+        self.create_nodes()
 
     @staticmethod
     def event_handler():
@@ -38,3 +39,17 @@ class Visualiser:
             self.draw()
             self.clock.tick(60)
         pygame.quit()
+
+    def create_nodes(self):
+        generations = self.root.get_generations()
+        top_margin = 100
+        spacing = 100
+
+        for generation_number, people in enumerate(generations):
+            y = top_margin + generation_number * spacing
+            spacing = self.WIDTH/(len(people) + 1)
+
+            for person_number, person in enumerate(people):
+                x = spacing * (person_number + 1)
+                self.nodes.append(Node(person, x, y))
+
