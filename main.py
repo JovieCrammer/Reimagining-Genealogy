@@ -2,6 +2,7 @@ from data.sample_family import root
 from music.music_generator import create_composition
 from music.midi_writer import write_midi
 from visuals.visualiser import Visualiser
+from visuals.reveal_mode import RevealMode
 
 
 def print_tree(person, generation=0):
@@ -25,5 +26,5 @@ create_composition(root)
 composition = create_composition(root)
 write_midi(composition)
 
-visualiser = Visualiser(1000, 800, root)
+visualiser = Visualiser(1000, 800, root, RevealMode.BIRTH_YEAR)
 visualiser.run()
