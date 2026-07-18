@@ -3,11 +3,11 @@ from models.family_tree import FamilyTree
 from music.music_generator import person_to_note
 
 # create sample people
-bob = Person("Bob", 1970)
-alice = Person("Alice", 1995)
-summer = Person("Summer", 2003)
-ella = Person("Ella", 2000)
-logan = Person("Logan", 2011)
+bob = Person("Bob", 1960)
+alice = Person("Alice", 1985)
+summer = Person("Summer", 2000)
+ella = Person("Ella", 1999)
+logan = Person("Logan", 2007)
 kent = Person("Kent", 2025)
 
 # create sample family relationships
