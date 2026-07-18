@@ -17,12 +17,10 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    for node in nodes:
-        node.update()
-
     screen.fill(0)
 
     for node in nodes:
+        node.update()
         node.draw(screen)
 
     # display

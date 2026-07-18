@@ -6,8 +6,8 @@ class Node:
         self.x = x
         self.y = y
         self.radius = 0
-        self.target_radius = 10
-        self.growth_speed = 0.1
+        self.target_radius = 20
+        self.growth_speed = 0.2
 
     def update(self):
         if self.radius < self.target_radius:
