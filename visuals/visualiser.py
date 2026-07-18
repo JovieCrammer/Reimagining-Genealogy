@@ -1,12 +1,15 @@
 import pygame
+from visuals.node import Node
 
 pygame.init()
 
 WIDTH, HEIGHT = 1000, 800
-clock = pygame.time.Clock()
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Reimagining Genealogy")
+clock = pygame.time.Clock()
+
+nodes = [Node(None, WIDTH/2, HEIGHT/2)]
 
 running = True
 while running:
@@ -14,15 +17,13 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+    for node in nodes:
+        node.update()
+
     screen.fill(0)
 
-    # draw one circle
-    pygame.draw.circle(
-        screen,
-        (255, 255, 255),
-        (500, 350),
-        8
-    )
+    for node in nodes:
+        node.draw(screen)
 
     # display
     pygame.display.flip()
