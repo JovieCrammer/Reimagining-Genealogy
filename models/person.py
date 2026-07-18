@@ -18,6 +18,12 @@ class Person:
         if self not in parent.children:
             parent.children.append(self)
 
+    def get_all_people(self):
+        people = [self]
+        for child in self.children:
+            people.extend(child.get_all_people())
+        return people
+
     def __str__(self):
         return self.name
     

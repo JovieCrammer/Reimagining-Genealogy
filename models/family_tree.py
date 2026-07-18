@@ -17,3 +17,6 @@ class FamilyTree:
 
         traverse(self.root, 0)
         return generations
+
+    def get_all_people(self):
+        return self.root.get_all_people()
