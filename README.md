@@ -7,7 +7,7 @@ brew install fluid-synth
 ```
 
 ```
-git clone <repository-url>
+git clone https://github.com/JovieCrammer/Reimagining-Genealogy.git
 ```
 
 ```
