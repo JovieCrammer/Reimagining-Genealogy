@@ -1,6 +1,8 @@
 import pygame
 from visuals.node import Node
 from visuals.reveal_mode import RevealMode
+from music.music_player import MusicPlayer
+from music.music_generator import person_to_note
 
 
 class Visualiser:
@@ -14,15 +16,17 @@ class Visualiser:
         self.nodes = []
         self.node_dictionary = {}
         self.root = root
+        self.generation_lookup = {}
+        self.create_generation_lookup()
         self.reveal_mode = reveal_mode
         self.node_spread = 150
         self.create_nodes()
         self.reveal_queue = []
         self.fill_reveal_queue()
-
-        self.visible_nodes = 0
         self.last_node_time = pygame.time.get_ticks()
         self.delay = 800
+        self.music_player = MusicPlayer()
+        self.playing_notes = []
 
     @staticmethod
     def event_handler():
@@ -34,12 +38,20 @@ class Visualiser:
     def update(self):
         now = pygame.time.get_ticks()
 
-        if self.visible_nodes < len(self.nodes) and now - self.last_node_time > self.delay:
-            if self.reveal_queue:
-                person = self.reveal_queue.pop(0)
-                node = self.node_dictionary[person]
-                node.visible = True
-                self.last_node_time = now
+        for note, stop_time in self.playing_notes[:]:
+            if now >= stop_time:
+                self.music_player.stop(note)
+                self.playing_notes.remove((note, stop_time))
+
+        if self.reveal_queue and now - self.last_node_time > self.delay:
+            person, generation = self.reveal_queue.pop(0)
+            node = self.node_dictionary[person]
+            node.visible = True
+            note = person_to_note(person, generation)
+
+            self.music_player.play(note)
+            self.playing_notes.append((note, now + note.duration * 800))
+            self.last_node_time = now
 
         for node in self.nodes:
             if node.visible:
@@ -95,21 +107,40 @@ class Visualiser:
             )
 
     def fill_reveal_queue(self):
-
         if self.reveal_mode == RevealMode.GENERATION:
-            for generation in self.root.get_generations():
-                self.reveal_queue.extend(generation)
+            for generation_number, people in enumerate(self.root.get_generations()):
+                for person in people:
+                    self.reveal_queue.append((person, generation_number))
 
         elif self.reveal_mode == RevealMode.BIRTH_YEAR:
-            self.reveal_queue = sorted(
+            people = sorted(
                 self.root.get_all_people(),
                 key=lambda person: person.birth_year
             )
+            for person in people:
+                self.reveal_queue.append(
+                    (
+                        person,
+                        self.generation_lookup[person]
+                    )
+                )
 
         elif self.reveal_mode == RevealMode.GENERATION_BIRTH_YEAR:
             for generation in self.root.get_generations():
-                ordered_generation = sorted(
+                ordered = sorted(
                     generation,
                     key=lambda person: person.birth_year
                 )
-                self.reveal_queue.extend(ordered_generation)
+                for person in ordered:
+                    self.reveal_queue.append(
+                        (
+                            person,
+                            self.generation_lookup[person]
+                        )
+                    )
+
+    def create_generation_lookup(self):
+        generations = self.root.get_generations()
+        for generation_number, people in enumerate(generations):
+            for person in people:
+                self.generation_lookup[person] = generation_number
