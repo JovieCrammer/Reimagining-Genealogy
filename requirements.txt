@@ -1,0 +1,4 @@
+MIDIUtil==1.2.1
+numpy==2.5.1
+pyFluidSynth==1.4.0
+pygame==2.6.1
