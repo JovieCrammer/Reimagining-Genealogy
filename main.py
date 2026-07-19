@@ -21,8 +21,6 @@ def print_generations():
 
 
 print_generations()
-create_composition(root)
-
 composition = create_composition(root)
 write_midi(composition)
 
