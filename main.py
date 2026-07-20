@@ -24,5 +24,5 @@ print_generations()
 composition = create_composition(tree)
 write_midi(composition)
 
-visualiser = Visualiser(1000, 800, tree, RevealMode.BIRTH_YEAR)
+visualiser = Visualiser(1000, 800, tree, RevealMode.GENERATION_BIRTH_YEAR)
 visualiser.run()

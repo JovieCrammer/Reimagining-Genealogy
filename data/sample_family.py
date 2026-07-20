@@ -8,6 +8,7 @@ def create_sample_family():
     people = []
 
     bob = Person("Bob", 1960)
+    jane = Person("Jane", 1962)
     alice = Person("Alice", 1985)
     summer = Person("Summer", 2000)
     ella = Person("Ella", 1999)
@@ -22,6 +23,8 @@ def create_sample_family():
     # create sample family relationships
     bob.add_child(alice)
     bob.add_child(summer)
+    alice.add_parent(jane)
+    summer.add_parent(jane)
     alice.add_child(ella)
     alice.add_child(logan)
     ella.add_child(kent)
@@ -42,6 +45,7 @@ def create_sample_family():
     people.append(carol)
     people.append(jr)
     people.append(mary)
+    people.append(jane)
 
     return people
 
