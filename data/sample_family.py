@@ -2,25 +2,40 @@ from models.person import Person
 from models.family_tree import FamilyTree
 from music.music_generator import person_to_note
 
+
 # create sample people
-bob = Person("Bob", 1960)
-alice = Person("Alice", 1985)
-summer = Person("Summer", 2000)
-ella = Person("Ella", 1999)
-logan = Person("Logan", 2007)
-kent = Person("Kent", 2025)
-mark = Person("Mark", 2000)
-bill = Person("Bill", 2050)
+def create_sample_family():
+    people = []
 
-# create sample family relationships
-bob.add_child(alice)
-bob.add_child(summer)
-alice.add_child(ella)
-alice.add_child(logan)
-ella.add_child(kent)
-kent.add_child(bill)
+    bob = Person("Bob", 1960)
+    alice = Person("Alice", 1985)
+    summer = Person("Summer", 2000)
+    ella = Person("Ella", 1999)
+    logan = Person("Logan", 2007)
+    kent = Person("Kent", 2025)
+    mark = Person("Mark", 2000)
+    bill = Person("Bill", 2050)
 
-root = FamilyTree(bob)
+    # create sample family relationships
+    bob.add_child(alice)
+    bob.add_child(summer)
+    alice.add_child(ella)
+    alice.add_child(logan)
+    ella.add_child(kent)
+    kent.add_child(bill)
+    mark.add_child(kent)
 
-# test converting a person to a note
-print(kent.parents)
+    people.append(bob)
+    people.append(alice)
+    people.append(summer)
+    people.append(ella)
+    people.append(logan)
+    people.append(kent)
+    people.append(mark)
+    people.append(bill)
+
+    return people
+
+
+family = create_sample_family()
+tree = FamilyTree(family)
