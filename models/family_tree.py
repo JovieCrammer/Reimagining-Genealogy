@@ -1,6 +1,6 @@
 class FamilyTree:
-    def __init__(self, root):
-        self.root = root  # person from where exploration starts
+    def __init__(self, people):
+        self.people = people
 
     # group people into generations
     def get_generations(self):
@@ -10,13 +10,22 @@ class FamilyTree:
             if len(generations) <= generation:  # add the new generation if it doesn't exist
                 generations.append([])
 
-            generations[generation].append(person)
+            if person not in generations[generation]:
+                generations[generation].append(person)
 
             for child in person.children:
                 traverse(child, generation+1)
 
-        traverse(self.root, 0)
+        for root in self.get_roots():
+            traverse(root, 0)
         return generations
 
     def get_all_people(self):
-        return self.root.get_all_people()
+        return self.people
+
+    def get_roots(self):
+        roots = []
+        for person in self.people:
+            if not person.parents:
+                roots.append(person)
+        return roots
