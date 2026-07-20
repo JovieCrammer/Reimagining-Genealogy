@@ -21,6 +21,7 @@ class Visualiser:
         self.reveal_mode = reveal_mode
         self.node_spread = 150
         self.create_nodes()
+        self.layout_nodes()
         self.reveal_queue = []
         self.fill_reveal_queue()
         self.last_node_time = pygame.time.get_ticks()
@@ -59,6 +60,7 @@ class Visualiser:
 
     def draw(self):
         self.screen.fill(0)
+        self.draw_connections()
         for node in self.nodes:
             if node.visible:
                 node.draw(self.screen)
@@ -148,3 +150,32 @@ class Visualiser:
         for generation_number, people in enumerate(generations):
             for person in people:
                 self.generation_lookup[person] = generation_number
+
+    def layout_nodes(self):
+
+        generations = self.root.get_generations()
+        vertical_spacing = 120
+
+        for generation_number, people in enumerate(generations):
+            y = 100 + generation_number * vertical_spacing
+            horizontal_spacing = self.WIDTH / (len(people) + 1)
+
+            for i, person in enumerate(people):
+                node = self.node_dictionary[person]
+                node.x = horizontal_spacing * (i + 1)
+                node.y = y
+
+    def draw_connections(self):
+        for person in self.root.get_all_people():
+            child = self.node_dictionary[person]
+            for parent in person.parents:
+                parent_node = self.node_dictionary[parent]
+
+                if parent_node.visible and child.visible:
+                    pygame.draw.line(
+                        self.screen,
+                        "white",
+                        (parent_node.x, parent_node.y),
+                        (child.x, child.y),
+                        2
+                    )
