@@ -3,6 +3,7 @@ from visuals.node import Node
 from visuals.reveal_mode import RevealMode
 from music.music_player import MusicPlayer
 from music.music_generator import person_to_note
+from visuals.layout_engine import LayoutEngine
 
 
 class Visualiser:
@@ -21,7 +22,7 @@ class Visualiser:
         self.reveal_mode = reveal_mode
         self.node_spread = 150
         self.create_nodes()
-        self.layout_nodes()
+        self.set_layout()
         self.reveal_queue = []
         self.fill_reveal_queue()
         self.last_node_time = pygame.time.get_ticks()
@@ -88,30 +89,6 @@ class Visualiser:
         self.node_dictionary[person] = node
         return True
 
-    def place_person(self, person, x, y, node_spread):
-        created = self.add_node(person, x, y)
-        if not created:
-            return
-
-        self.add_node(person, x, y)
-        children = person.children
-
-        if not children:
-            return
-
-        child_y = y + 100
-        num_children = len(children)
-
-        for i, child in enumerate(children):
-            child_x = x + (i - (num_children-1)/2) * node_spread
-
-            self.place_person(
-                child,
-                child_x,
-                child_y,
-                node_spread
-            )
-
     def fill_reveal_queue(self):
         if self.reveal_mode == RevealMode.GENERATION:
             for generation_number, people in enumerate(self.root.get_generations()):
@@ -151,51 +128,6 @@ class Visualiser:
             for person in people:
                 self.generation_lookup[person] = generation_number
 
-    def layout_nodes(self):
-        occupied = {}
-        generations = self.root.get_generations()
-        vertical_spacing = 120
-
-        for generation_number, people in enumerate(generations):
-            occupied[generation_number] = []
-            y = 100 + generation_number * vertical_spacing
-
-            if generation_number == 0:
-                spacing = self.WIDTH / (len(people) + 1)
-
-                for i, person in enumerate(people):
-                    node = self.node_dictionary[person]
-                    node.x = spacing * (i + 1)
-                    node.y = y
-
-            else:
-                for person in people:
-                    node = self.node_dictionary[person]
-                    node.y = y
-
-                    if len(person.parents) == 1:
-                        parent = person.parents[0]
-                        parent_node = self.node_dictionary[parent]
-                        siblings = parent.children
-                        index = siblings.index(person)
-                        offset = (index - (len(siblings) - 1) / 2) * 100
-                        ideal_x = parent_node.x + offset
-                        node.x = self.resolve_collision(
-                            ideal_x,
-                            occupied[generation_number]
-                        )
-
-                    elif len(person.parents) >= 2:
-                        parent_nodes = [
-                            self.node_dictionary[parent]
-                            for parent in person.parents
-                        ]
-                        average_x = sum(parent.x for parent in parent_nodes) / len(parent_nodes)
-                        node.x = average_x
-
-                    else:
-                        node.x = self.WIDTH / 2
-
     def draw_connections(self):
         for person in self.root.get_all_people():
             child = self.node_dictionary[person]
@@ -211,12 +143,11 @@ class Visualiser:
                         2
                     )
 
-    @staticmethod
-    def resolve_collision(x, occupied):
-        spacing = 120
+    def set_layout(self):
+        layout_engine = LayoutEngine(self.root, self.WIDTH, self.HEIGHT)
+        positions = layout_engine.layout()
 
-        while any(abs(x - other) < spacing for other in occupied):
-            x += spacing
-
-        occupied.append(x)
-        return x
+        for person, (x, y) in positions.items():
+            node = self.node_dictionary[person]
+            node.x = x
+            node.y = y
