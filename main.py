@@ -1,4 +1,4 @@
-from data.sample_family import root
+from data.sample_family import tree
 from music.music_generator import create_composition
 from music.midi_writer import write_midi
 from visuals.visualiser import Visualiser
@@ -12,7 +12,7 @@ def print_tree(person, generation=0):
 
 
 def print_generations():
-    generations = root.get_generations()
+    generations = tree.get_generations()
     for generation_number, people in enumerate(generations):
         print(f"Generation {generation_number}")
 
@@ -21,8 +21,8 @@ def print_generations():
 
 
 print_generations()
-composition = create_composition(root)
+composition = create_composition(tree)
 write_midi(composition)
 
-visualiser = Visualiser(1000, 800, root, RevealMode.BIRTH_YEAR)
+visualiser = Visualiser(1000, 800, tree, RevealMode.BIRTH_YEAR)
 visualiser.run()
