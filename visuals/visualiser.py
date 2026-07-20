@@ -152,18 +152,49 @@ class Visualiser:
                 self.generation_lookup[person] = generation_number
 
     def layout_nodes(self):
-
+        occupied = {}
         generations = self.root.get_generations()
         vertical_spacing = 120
 
         for generation_number, people in enumerate(generations):
+            occupied[generation_number] = []
             y = 100 + generation_number * vertical_spacing
-            horizontal_spacing = self.WIDTH / (len(people) + 1)
 
-            for i, person in enumerate(people):
-                node = self.node_dictionary[person]
-                node.x = horizontal_spacing * (i + 1)
-                node.y = y
+            if generation_number == 0:
+                spacing = self.WIDTH / (len(people) + 1)
+
+                for i, person in enumerate(people):
+                    node = self.node_dictionary[person]
+                    node.x = spacing * (i + 1)
+                    node.y = y
+
+            else:
+                for person in people:
+                    node = self.node_dictionary[person]
+                    node.y = y
+
+                    if len(person.parents) == 1:
+                        parent = person.parents[0]
+                        parent_node = self.node_dictionary[parent]
+                        siblings = parent.children
+                        index = siblings.index(person)
+                        offset = (index - (len(siblings) - 1) / 2) * 100
+                        ideal_x = parent_node.x + offset
+                        node.x = self.resolve_collision(
+                            ideal_x,
+                            occupied[generation_number]
+                        )
+
+                    elif len(person.parents) >= 2:
+                        parent_nodes = [
+                            self.node_dictionary[parent]
+                            for parent in person.parents
+                        ]
+                        average_x = sum(parent.x for parent in parent_nodes) / len(parent_nodes)
+                        node.x = average_x
+
+                    else:
+                        node.x = self.WIDTH / 2
 
     def draw_connections(self):
         for person in self.root.get_all_people():
@@ -179,3 +210,13 @@ class Visualiser:
                         (child.x, child.y),
                         2
                     )
+
+    @staticmethod
+    def resolve_collision(x, occupied):
+        spacing = 120
+
+        while any(abs(x - other) < spacing for other in occupied):
+            x += spacing
+
+        occupied.append(x)
+        return x

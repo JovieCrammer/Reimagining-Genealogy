@@ -4,20 +4,40 @@ class FamilyTree:
 
     # group people into generations
     def get_generations(self):
-        generations = []
 
-        def traverse(person, generation):
-            if len(generations) <= generation:  # add the new generation if it doesn't exist
-                generations.append([])
+        # Start everyone at generation 0
+        generation_lookup = {
+            person: 0
+            for person in self.people
+        }
 
-            if person not in generations[generation]:
-                generations[generation].append(person)
+        changed = True
 
-            for child in person.children:
-                traverse(child, generation+1)
+        while changed:
 
-        for root in self.get_roots():
-            traverse(root, 0)
+            changed = False
+
+            for person in self.people:
+
+                for child in person.children:
+
+                    # Child must be at least one generation below parent
+                    if generation_lookup[child] < generation_lookup[person] + 1:
+                        generation_lookup[child] = generation_lookup[person] + 1
+                        changed = True
+
+                    # Parent must be at least one generation above child
+                    if generation_lookup[person] < generation_lookup[child] - 1:
+                        generation_lookup[person] = generation_lookup[child] - 1
+                        changed = True
+
+        max_generation = max(generation_lookup.values())
+
+        generations = [[] for _ in range(max_generation + 1)]
+
+        for person, generation in generation_lookup.items():
+            generations[generation].append(person)
+
         return generations
 
     def get_all_people(self):
