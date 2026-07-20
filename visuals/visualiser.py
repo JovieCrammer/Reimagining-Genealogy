@@ -74,19 +74,23 @@ class Visualiser:
         pygame.quit()
 
     def create_nodes(self):
-        self.place_person(
-            self.root.root,
-            self.WIDTH/2,
-            100,
-            self.node_spread
-        )
+        for person in self.root.get_all_people():
+            self.add_node(person, self.WIDTH/2, self.HEIGHT/2)
 
     def add_node(self, person, x, y):
+        if person in self.node_dictionary:
+            return False
+
         node = Node(person, x, y)
         self.nodes.append(node)
         self.node_dictionary[person] = node
+        return True
 
     def place_person(self, person, x, y, node_spread):
+        created = self.add_node(person, x, y)
+        if not created:
+            return
+
         self.add_node(person, x, y)
         children = person.children
 
