@@ -10,18 +10,16 @@ class Node:
         self.target_radius = 20
         self.growth_speed = 0.2
         self.visible = False
+        self.img = pygame.image.load("assets/green_note.png").convert_alpha()
+        self.img = pygame.transform.scale(self.img, (100, 80))
 
     def update(self):
         if self.radius < self.target_radius:
             self.radius += self.growth_speed
 
     def draw(self, screen):
-        pygame.draw.circle(
-            screen,
-            (255, 255, 255),
-            (int(self.x), int(self.y)),
-            int(self.radius)
-        )
+        rect = self.img.get_rect(center=(self.x, self.y))
+        screen.blit(self.img, rect)
 
         # temporary names
         font = pygame.font.Font(None, 24)

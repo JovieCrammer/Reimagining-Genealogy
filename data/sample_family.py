@@ -19,6 +19,7 @@ def create_sample_family():
     carol = Person("Carol", 2007)
     jr = Person("Jr", 2034)
     mary = Person("Mary", 2024)
+    gary = Person("Gary", 2026)
 
     # create sample family relationships
     bob.add_child(alice)
@@ -33,6 +34,7 @@ def create_sample_family():
     logan.add_child(jr)
     carol.add_child(jr)
     bill.add_parent(mary)
+    mark.add_child(gary)
 
     people.append(bob)
     people.append(alice)
@@ -46,6 +48,7 @@ def create_sample_family():
     people.append(jr)
     people.append(mary)
     people.append(jane)
+    people.append(gary)
 
     return people
 
