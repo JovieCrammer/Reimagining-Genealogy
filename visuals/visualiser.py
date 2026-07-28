@@ -137,10 +137,10 @@ class Visualiser:
                 if parent_node.visible and child.visible:
                     pygame.draw.line(
                         self.screen,
-                        "white",
+                        "grey18",
                         (parent_node.x, parent_node.y),
                         (child.x, child.y),
-                        2
+                        1
                     )
 
     def set_layout(self):
