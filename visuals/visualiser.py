@@ -5,6 +5,7 @@ from music.music_player import MusicPlayer
 from music.music_generator import person_to_note
 from visuals.layout_engine import LayoutEngine
 from camera.camera import Camera
+from visuals.glyph import Glyph
 
 
 class Visualiser:
@@ -16,6 +17,8 @@ class Visualiser:
         self.HEIGHT = HEIGHT
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.clock = pygame.time.Clock()
+
+        self.glyph = Glyph("assets/glyph.svg", base_size=64)
 
         self.nodes = []
         self.node_dictionary = {}
@@ -35,7 +38,6 @@ class Visualiser:
         self.playing_notes = []
 
         self.camera = Camera(self.WIDTH, self.HEIGHT)
-
 
     def event_handler(self):
         for event in pygame.event.get():
@@ -102,7 +104,7 @@ class Visualiser:
         if person in self.node_dictionary:
             return False
 
-        node = Node(person, x, y)
+        node = Node(person, x, y, self.glyph)
         self.nodes.append(node)
         self.node_dictionary[person] = node
         return True

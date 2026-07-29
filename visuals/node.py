@@ -2,18 +2,15 @@ import pygame
 
 
 class Node:
-    def __init__(self, person, x, y):
+    def __init__(self, person, x, y, glyph):
         self.person = person
         self.x = x
         self.y = y
+        self.glyph = glyph
         self.radius = 0
         self.target_radius = 20
         self.growth_speed = 0.2
         self.visible = False
-        self.img = pygame.image.load("assets/glyph.png").convert_alpha()
-        new_width = self.img.get_width() * 0.1
-        new_height = self.img.get_height() * 0.1
-        self.img = pygame.transform.smoothscale(self.img, (new_width, new_height))
 
     def update(self):
         if self.radius < self.target_radius:
@@ -21,14 +18,14 @@ class Node:
 
     def draw(self, screen, camera):
         screen_x, screen_y = camera.world_to_screen((self.x, self.y))
-        scaled = camera.scale(self.img)
-        rect = scaled.get_rect(center=(screen_x, screen_y))
-        screen.blit(scaled, rect)
 
-        # tint glyph
-        # tinted = self.img.copy()
-        # tinted.fill((100, 200, 255), special_flags=pygame.BLEND_RGBA_MULT)
-        # screen.blit(tinted, rect)
+        image = self.glyph.get_surface(
+            camera.zoom,
+            (100, 200, 255)  # Tint colour
+        )
+
+        rect = image.get_rect(center=(screen_x, screen_y))
+        screen.blit(image, rect)
 
         # temporary names
         font = pygame.font.Font(None, 24)
