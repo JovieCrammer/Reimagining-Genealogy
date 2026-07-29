@@ -23,6 +23,7 @@ class Node:
         rect = self.img.get_rect(center=(self.x, self.y))
         screen.blit(self.img, rect)
 
+        # tint glyph
         tinted = self.img.copy()
         tinted.fill((100, 200, 255), special_flags=pygame.BLEND_RGBA_MULT)
         screen.blit(tinted, rect)
