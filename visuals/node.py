@@ -23,6 +23,10 @@ class Node:
         rect = self.img.get_rect(center=(self.x, self.y))
         screen.blit(self.img, rect)
 
+        tinted = self.img.copy()
+        tinted.fill((100, 200, 255), special_flags=pygame.BLEND_RGBA_MULT)
+        screen.blit(tinted, rect)
+
         # temporary names
         font = pygame.font.Font(None, 24)
         text = font.render(self.person.name, True, (255, 255, 255,), (0, 0, 0))
