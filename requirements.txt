@@ -1,5 +1,5 @@
+CairoSVG==2.8.2
 MIDIUtil==1.2.1
 numpy==2.5.1
 pyFluidSynth==1.4.0
 pygame==2.6.1
-cairosvg==2.8.2
