@@ -3,9 +3,9 @@ import pygame
 
 class Glyph:
 
-    def __init__(self, png_path, base_size=64):
+    def __init__(self, png_path, base_width=40):
         self.png_path = png_path
-        self.base_size = base_size
+        self.base_width = base_width
 
         self.image = pygame.image.load(png_path).convert_alpha()
         self.cache = {}
@@ -16,11 +16,14 @@ class Glyph:
         if key in self.cache:
             return self.cache[key]
 
-        size = max(1, int(self.base_size * zoom))
+        width = int(self.base_width * zoom)
+
+        aspect_ratio = self.image.get_height() / self.image.get_width()
+        height = int(width * aspect_ratio)
 
         image = pygame.transform.smoothscale(
             self.image,
-            (size, size)
+            (width, height)
         )
 
         self.cache[key] = image
