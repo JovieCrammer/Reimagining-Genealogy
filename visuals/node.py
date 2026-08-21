@@ -19,10 +19,7 @@ class Node:
     def draw(self, screen, camera):
         screen_x, screen_y = camera.world_to_screen((self.x, self.y))
 
-        image = self.glyph.get_surface(
-            camera.zoom,
-            (100, 200, 255)  # Tint colour
-        )
+        image = self.glyph.get_surface(camera.zoom)
 
         rect = image.get_rect(center=(screen_x, screen_y))
         screen.blit(image, rect)
