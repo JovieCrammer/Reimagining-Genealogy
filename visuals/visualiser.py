@@ -18,7 +18,7 @@ class Visualiser:
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.clock = pygame.time.Clock()
 
-        self.glyph = Glyph("assets/newglyph.png", base_width=40)
+        self.glyph = Glyph("assets/glyph.png", base_width=40)
 
         self.nodes = []
         self.node_dictionary = {}
