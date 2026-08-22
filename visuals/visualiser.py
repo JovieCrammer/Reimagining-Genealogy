@@ -59,19 +59,23 @@ class Visualiser:
     def update(self):
         now = pygame.time.get_ticks()
 
-        for note, stop_time in self.playing_notes[:]:
+        for note, stop_time, node in self.playing_notes[:]:
             if now >= stop_time:
                 self.music_player.stop(note)
-                self.playing_notes.remove((note, stop_time))
+                node.playing = False
+                self.playing_notes.remove((note, stop_time, node))
 
         if self.reveal_queue and now - self.last_node_time > self.delay:
             person, generation = self.reveal_queue.pop(0)
             node = self.node_dictionary[person]
             node.visible = True
             note = person_to_note(person, generation)
+            node.playing = True
 
             self.music_player.play(note)
-            self.playing_notes.append((note, now + note.duration * 800))
+            self.playing_notes.append(
+                (note, now + note.duration * 800, node)
+            )
             self.last_node_time = now
 
         for node in self.nodes:

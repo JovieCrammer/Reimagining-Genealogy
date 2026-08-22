@@ -6,12 +6,12 @@ class Glyph:
     def __init__(self, png_path, base_width=40):
         self.png_path = png_path
         self.base_width = base_width
-
         self.image = pygame.image.load(png_path).convert_alpha()
         self.cache = {}
+        self.glow_colour = (170, 255, 200)
 
-    def get_surface(self, zoom):
-        key = round(zoom, 2)
+    def get_surface(self, zoom, playing=False):
+        key = (round(zoom, 2), playing)
 
         if key in self.cache:
             return self.cache[key]
@@ -26,6 +26,10 @@ class Glyph:
             (width, height)
         )
 
-        self.cache[key] = image
+        if playing:
+            tint = pygame.Surface(image.get_size(), pygame.SRCALPHA)
+            tint.fill(self.glow_colour)
+            image.blit(tint, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
 
+        self.cache[key] = image
         return image
