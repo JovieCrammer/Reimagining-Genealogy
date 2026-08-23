@@ -2,7 +2,7 @@ import pygame
 from visuals.node import Node
 from visuals.reveal_mode import RevealMode
 from music.music_player import MusicPlayer
-from music.music_generator import person_to_note
+from music.music_generator import person_to_notes
 from visuals.layout_engine import LayoutEngine
 from camera.camera import Camera
 from visuals.glyph import Glyph
@@ -36,6 +36,7 @@ class Visualiser:
 
         self.music_player = MusicPlayer()
         self.playing_notes = []
+        self.motif_queue = []
 
         self.camera = Camera(self.WIDTH, self.HEIGHT)
 
@@ -59,26 +60,80 @@ class Visualiser:
     def update(self):
         now = pygame.time.get_ticks()
 
-        for note, stop_time, node in self.playing_notes[:]:
-            if now >= stop_time:
-                self.music_player.stop(note)
-                node.playing = False
-                self.playing_notes.remove((note, stop_time, node))
+        # --------------------------------------------------
+        # Play musical motifs one note at a time
+        # --------------------------------------------------
+
+        for motif in self.motif_queue[:]:
+
+            notes, node, index, next_time = motif
+
+            if now >= next_time:
+
+                # Stop the previous note
+                if index > 0:
+                    previous_note = notes[index - 1]
+
+                    self.music_player.stop(
+                        previous_note
+                    )
+
+                # Finished the motif
+                if index >= len(notes):
+                    node.playing = False
+                    self.motif_queue.remove(motif)
+                    continue
+
+                # Play the next note
+                note = notes[index]
+
+                self.music_player.play(note)
+
+                self.motif_queue.remove(motif)
+
+                self.motif_queue.append(
+                    (
+                        notes,
+                        node,
+                        index + 1,
+                        now + int(note.duration * 800)
+                    )
+                )
+
+        # --------------------------------------------------
+        # Reveal the next person
+        # --------------------------------------------------
 
         if self.reveal_queue and now - self.last_node_time > self.delay:
             person, generation = self.reveal_queue.pop(0)
+
             node = self.node_dictionary[person]
+
             node.visible = True
-            note = person_to_note(person, generation)
             node.playing = True
 
-            self.music_player.play(note)
-            self.playing_notes.append(
-                (note, now + note.duration * 800, node)
+            notes = person_to_notes(
+                person,
+                generation
             )
+
+            self.motif_queue.append(
+                (
+                    notes,
+                    node,
+                    0,
+                    now
+                )
+            )
+
             self.last_node_time = now
 
+        # --------------------------------------------------
+        # Update visible nodes
+        # --------------------------------------------------
+
         for node in self.nodes:
+
             if node.visible:
                 node.update()
 

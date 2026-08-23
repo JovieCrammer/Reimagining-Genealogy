@@ -1,6 +1,5 @@
 from models.person import Person
 from models.family_tree import FamilyTree
-from music.music_generator import person_to_note
 
 
 # create sample people
