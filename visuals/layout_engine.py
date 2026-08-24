@@ -5,26 +5,20 @@ class LayoutEngine:
         self.width = width
         self.height = height
 
-        # Vertical distance between family levels
+        # vertical distance between family levels
         self.vertical = 130
 
-        # Distance between partners
+        # distance between partners
         self.partner_spacing = 75
 
-        # Minimum distance between separate family units
+        # minimum distance between separate family units
         self.family_spacing = 100
 
     def layout(self):
 
         people = self.tree.get_all_people()
 
-        # --------------------------------------------------
-        # 1. Build partner groups
-        #
-        # If two people share a child, they belong to the
-        # same family unit.
-        # --------------------------------------------------
-
+        # if two people share a child, they are the same family unit
         parent = {
             person: person
             for person in people
@@ -45,7 +39,7 @@ class LayoutEngine:
             if root_a != root_b:
                 parent[root_b] = root_a
 
-        # People who share a child become partners
+        # people who share a child become partners
         for child in people:
 
             if len(child.parents) < 2:
@@ -55,10 +49,6 @@ class LayoutEngine:
 
             for other_parent in child.parents[1:]:
                 union(first_parent, other_parent)
-
-        # --------------------------------------------------
-        # 2. Create family units
-        # --------------------------------------------------
 
         units = {}
 
@@ -73,26 +63,12 @@ class LayoutEngine:
 
         units = list(units.values())
 
-        # Map person -> family unit
+        # map person -> family unit
         person_to_unit = {}
 
         for unit in units:
             for person in unit:
                 person_to_unit[person] = unit
-
-        # --------------------------------------------------
-        # 3. Build connections between family units
-        #
-        # Example:
-        #
-        # Bob + Jane
-        #       |
-        #     Alice
-        #
-        # becomes:
-        #
-        # unit(Bob, Jane) -> unit(Alice)
-        # --------------------------------------------------
 
         unit_parents = {
             id(unit): set()
@@ -123,13 +99,6 @@ class LayoutEngine:
                     id(parent_unit)
                 )
 
-        # --------------------------------------------------
-        # 4. Give every family unit a vertical level
-        #
-        # A child unit is always one level below its
-        # parent unit.
-        # --------------------------------------------------
-
         unit_lookup = {
             id(unit): unit
             for unit in units
@@ -159,10 +128,6 @@ class LayoutEngine:
                         levels[child_id] = new_level
                         changed = True
 
-        # --------------------------------------------------
-        # 5. Group family units by level
-        # --------------------------------------------------
-
         levels_dict = {}
 
         for unit in units:
@@ -173,10 +138,6 @@ class LayoutEngine:
                 levels_dict[level] = []
 
             levels_dict[level].append(unit)
-
-        # --------------------------------------------------
-        # 6. Position the family units
-        # --------------------------------------------------
 
         positions = {}
         unit_centres = {}
@@ -217,18 +178,9 @@ class LayoutEngine:
                     (unit, desired_x)
                 )
 
-            # Sort units by where their parents want them
-            # to appear.
             desired.sort(
                 key=lambda item: item[1]
             )
-
-            # --------------------------------------------------
-            # Position units from left to right.
-            #
-            # Unlike the previous algorithm, units don't
-            # continuously push each other across the screen.
-            # --------------------------------------------------
 
             placed = []
 
@@ -265,10 +217,6 @@ class LayoutEngine:
                     (unit, x)
                 )
 
-            # --------------------------------------------------
-            # Centre this entire row
-            # --------------------------------------------------
-
             if placed:
 
                 first_unit, first_x = placed[0]
@@ -297,10 +245,6 @@ class LayoutEngine:
             else:
                 offset = 0
 
-            # --------------------------------------------------
-            # Assign positions to people inside each unit
-            # --------------------------------------------------
-
             for unit, centre_x in placed:
 
                 centre_x += offset
@@ -309,7 +253,6 @@ class LayoutEngine:
 
                 unit_y = 100 + level * self.vertical
 
-                # Stable ordering inside a family unit
                 unit_people = sorted(
                     unit,
                     key=lambda person: (
@@ -336,5 +279,4 @@ class LayoutEngine:
                         + i * self.partner_spacing,
                         unit_y
                     )
-
         return positions

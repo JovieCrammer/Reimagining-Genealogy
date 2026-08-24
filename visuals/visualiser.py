@@ -71,17 +71,12 @@ class Visualiser:
     def update(self):
         now = pygame.time.get_ticks()
 
-        # --------------------------------------------------
-        # Play musical motifs one note at a time
-        # --------------------------------------------------
-
+        # play note sequences
         for motif in self.motif_queue[:]:
-
             notes, node, index, next_time = motif
-
             if now >= next_time:
 
-                # Stop the previous note
+                # stop previous note
                 if index > 0:
                     previous_note = notes[index - 1]
 
@@ -89,19 +84,15 @@ class Visualiser:
                         previous_note
                     )
 
-                # Finished the motif
                 if index >= len(notes):
                     node.playing = False
                     self.motif_queue.remove(motif)
                     continue
 
-                # Play the next note
+                # next note
                 note = notes[index]
-
                 self.music_player.play(note)
-
                 self.motif_queue.remove(motif)
-
                 self.motif_queue.append(
                     (
                         notes,
@@ -110,10 +101,6 @@ class Visualiser:
                         now + int(note.duration * 800)
                     )
                 )
-
-        # --------------------------------------------------
-        # Reveal the next person
-        # --------------------------------------------------
 
         if self.reveal_queue and now - self.last_node_time > self.delay:
             person, generation = self.reveal_queue.pop(0)
@@ -138,10 +125,6 @@ class Visualiser:
             )
 
             self.last_node_time = now
-
-        # --------------------------------------------------
-        # Update visible nodes
-        # --------------------------------------------------
 
         for node in self.nodes:
 
@@ -223,17 +206,11 @@ class Visualiser:
 
     def draw_connections(self):
 
-        # Keep track of couples we've already drawn
         drawn_couples = set()
-
         for person in self.root.get_all_people():
 
-            # --------------------------------------------------
-            # 1. Draw partner / parent horizontal lines
-            # --------------------------------------------------
-
+            # 1. draw partner (horizontal lines)
             if len(person.parents) >= 2:
-
                 parents = tuple(
                     sorted(
                         person.parents,
@@ -243,7 +220,7 @@ class Visualiser:
 
                 if parents not in drawn_couples:
 
-                    # Only draw if both parents are visible
+                    # only draw if both parents are visible
                     if all(
                             self.node_dictionary[parent].visible
                             for parent in parents
@@ -270,10 +247,7 @@ class Visualiser:
 
                         drawn_couples.add(parents)
 
-            # --------------------------------------------------
-            # 2. Draw parent-couple -> child connection
-            # --------------------------------------------------
-
+            # 2. draw child connection
             if not person.parents:
                 continue
 
@@ -291,13 +265,7 @@ class Visualiser:
             if not parent_nodes:
                 continue
 
-            # --------------------------------------------------
-            # If there are two parents:
-            #
-            # connect the midpoint between the parents
-            # to the child.
-            # --------------------------------------------------
-
+            # midpoint between the parents
             if len(parent_nodes) >= 2:
 
                 parent_positions = [
@@ -334,10 +302,7 @@ class Visualiser:
                     1
                 )
 
-            # --------------------------------------------------
-            # If there is only one parent, connect directly.
-            # --------------------------------------------------
-
+            # if there is only one parent connect directly
             else:
 
                 parent_node = parent_nodes[0]
@@ -416,10 +381,7 @@ class Visualiser:
         panel_x = self.WIDTH - panel_width - 30
         panel_y = 30
 
-        # --------------------------------------------------
-        # Panel background
-        # --------------------------------------------------
-
+        # panel background
         panel = pygame.Rect(
             panel_x,
             panel_y,
@@ -442,10 +404,7 @@ class Visualiser:
             border_radius=12
         )
 
-        # --------------------------------------------------
-        # Fonts
-        # --------------------------------------------------
-
+        # fonts
         title_font = pygame.font.Font(None, 32)
         heading_font = pygame.font.Font(None, 22)
         body_font = pygame.font.Font(None, 20)
@@ -453,10 +412,7 @@ class Visualiser:
         x = panel_x + 25
         y = panel_y + 25
 
-        # --------------------------------------------------
-        # Name
-        # --------------------------------------------------
-
+        # name
         title = title_font.render(
             person.name,
             True,
@@ -470,10 +426,7 @@ class Visualiser:
 
         y += 45
 
-        # --------------------------------------------------
-        # Basic information
-        # --------------------------------------------------
-
+        # information
         if person.birth_year is not None:
             text = body_font.render(
                 f"Born: {person.birth_year}",
@@ -483,11 +436,8 @@ class Visualiser:
 
             self.screen.blit(text, (x, y))
             y += 28
- 
-        # --------------------------------------------------
-        # Parents
-        # --------------------------------------------------
 
+        # parents
         heading = heading_font.render(
             "Parents",
             True,
@@ -534,10 +484,7 @@ class Visualiser:
 
         y += 12
 
-        # --------------------------------------------------
-        # Partners
-        # --------------------------------------------------
-
+        # partner/s
         heading = heading_font.render(
             "Partner",
             True,
@@ -586,10 +533,7 @@ class Visualiser:
 
         y += 12
 
-        # --------------------------------------------------
-        # Children
-        # --------------------------------------------------
-
+        # children
         heading = heading_font.render(
             "Children",
             True,
@@ -620,7 +564,6 @@ class Visualiser:
                 y += 23
 
         else:
-
             text = body_font.render(
                 "None recorded",
                 True,
