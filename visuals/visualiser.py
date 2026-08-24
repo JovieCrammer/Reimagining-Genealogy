@@ -1,5 +1,6 @@
 import pygame
 from visuals.node import Node
+from visuals.reveal_system import RevealSystem
 from visuals.reveal_mode import RevealMode
 from music.music_player import MusicPlayer
 from music.music_generator import person_to_notes
@@ -9,39 +10,53 @@ from visuals.glyph import Glyph
 from visuals.information_panel import InformationPanel
 from visuals.connection_handler import ConnectionHandler
 
+
 class Visualiser:
-    def __init__(self, WIDTH, HEIGHT, root, reveal_mode=RevealMode.GENERATION):
+    def __init__(self, WIDTH, HEIGHT, root, reveal_mode=RevealMode.GENERATION_BIRTH_YEAR):
+
+        # pygame
         pygame.init()
         pygame.display.set_caption("Reimagining Genealogy")
 
+        # system
         self.WIDTH = WIDTH
         self.HEIGHT = HEIGHT
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.clock = pygame.time.Clock()
 
+        # glyph/s
         self.glyph = Glyph("assets/glyph.png", base_width=40)
 
+        # nodes
         self.nodes = []
         self.node_dictionary = {}
+
+        # tree
         self.root = root
-        self.generation_lookup = {}
-        self.create_generation_lookup()
         self.reveal_mode = reveal_mode
+
+        # reveal
+        self.delay = 800
+        self.reveal_system = RevealSystem(self.root, self.reveal_mode, self.delay)
+
+        # layout
         self.node_spread = 150
         self.create_nodes()
         self.set_layout()
-        self.reveal_queue = []
-        self.fill_reveal_queue()
-        self.last_node_time = pygame.time.get_ticks()
-        self.delay = 800
 
+        # music
         self.music_player = MusicPlayer()
         self.playing_notes = []
         self.motif_queue = []
 
+        # camera
         self.camera = Camera(self.WIDTH, self.HEIGHT)
+
+        # information panel
         self.selected_person = None
         self.information_panel = InformationPanel(self.WIDTH, self.HEIGHT)
+
+        # connections
         self.connection_handler = ConnectionHandler(self.camera, self.node_dictionary)
 
     def event_handler(self):
@@ -105,32 +120,18 @@ class Visualiser:
                     )
                 )
 
-        if self.reveal_queue and now - self.last_node_time > self.delay:
-            person, generation = self.reveal_queue.pop(0)
+        if self.reveal_system.ready():
+            result = self.reveal_system.get_next()
 
-            node = self.node_dictionary[person]
-
-            node.visible = True
-            node.playing = True
-
-            notes = person_to_notes(
-                person,
-                generation
-            )
-
-            self.motif_queue.append(
-                (
-                    notes,
-                    node,
-                    0,
-                    now
-                )
-            )
-
-            self.last_node_time = now
+            if result is not None:
+                person, generation = result
+                node = self.node_dictionary[person]
+                node.visible = True
+                node.playing = True
+                notes = person_to_notes(person, generation)
+                self.motif_queue.append((notes, node, 0, now))
 
         for node in self.nodes:
-
             if node.visible:
                 node.update()
 
@@ -172,45 +173,6 @@ class Visualiser:
         self.nodes.append(node)
         self.node_dictionary[person] = node
         return True
-
-    def fill_reveal_queue(self):
-        if self.reveal_mode == RevealMode.GENERATION:
-            for generation_number, people in enumerate(self.root.get_generations()):
-                for person in people:
-                    self.reveal_queue.append((person, generation_number))
-
-        elif self.reveal_mode == RevealMode.BIRTH_YEAR:
-            people = sorted(
-                self.root.get_all_people(),
-                key=lambda person: person.birth_year
-            )
-            for person in people:
-                self.reveal_queue.append(
-                    (
-                        person,
-                        self.generation_lookup[person]
-                    )
-                )
-
-        elif self.reveal_mode == RevealMode.GENERATION_BIRTH_YEAR:
-            for generation in self.root.get_generations():
-                ordered = sorted(
-                    generation,
-                    key=lambda person: person.birth_year
-                )
-                for person in ordered:
-                    self.reveal_queue.append(
-                        (
-                            person,
-                            self.generation_lookup[person]
-                        )
-                    )
-
-    def create_generation_lookup(self):
-        generations = self.root.get_generations()
-        for generation_number, people in enumerate(generations):
-            for person in people:
-                self.generation_lookup[person] = generation_number
 
     def set_layout(self):
         layout_engine = LayoutEngine(self.root, self.WIDTH, self.HEIGHT)
@@ -259,3 +221,4 @@ class Visualiser:
                 return node.person
 
         return None
+    
