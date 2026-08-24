@@ -2,7 +2,7 @@ from data.sample_family import tree
 from music.music_generator import create_composition
 from music.midi_writer import write_midi
 from visuals.visualiser import Visualiser
-from visuals.reveal_mode import RevealMode
+from reveal.reveal_mode import RevealMode
 
 
 def print_tree(person, generation=0):

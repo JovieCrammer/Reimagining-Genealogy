@@ -1,10 +1,10 @@
 import pygame
-from visuals.node import Node
-from visuals.reveal_system import RevealSystem
-from visuals.reveal_mode import RevealMode
+from models.node import Node
+from reveal.reveal_system import RevealSystem
+from reveal.reveal_mode import RevealMode
 from music.music_player import MusicPlayer
 from music.music_generator import person_to_notes
-from visuals.layout_engine import LayoutEngine
+from layout.layout_engine import LayoutEngine
 from camera.camera import Camera
 from visuals.glyph import Glyph
 from visuals.information_panel import InformationPanel

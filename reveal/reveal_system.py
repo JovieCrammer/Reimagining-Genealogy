@@ -1,5 +1,5 @@
 import pygame
-from visuals.reveal_mode import RevealMode
+from reveal.reveal_mode import RevealMode
 
 
 class RevealSystem:
