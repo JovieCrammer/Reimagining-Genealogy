@@ -155,7 +155,7 @@ class Visualiser:
         running = True
         while running:
             running = self.event_handler()
-            self.move_camera()
+            self.camera.move()
             self.update()
             self.draw()
             self.clock.tick(60)
@@ -183,22 +183,6 @@ class Visualiser:
             node.x = x
             node.y = y
 
-    def move_camera(self):
-        keys = pygame.key.get_pressed()
-        speed = 10
-
-        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-            self.camera.x -= speed
-
-        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-            self.camera.x += speed
-
-        if keys[pygame.K_UP] or keys[pygame.K_w]:
-            self.camera.y -= speed
-
-        if keys[pygame.K_DOWN] or keys[pygame.K_s]:
-            self.camera.y += speed
-
     def get_clicked_person(self, mouse_x, mouse_y):
         for node in reversed(self.nodes):
 
@@ -221,4 +205,3 @@ class Visualiser:
                 return node.person
 
         return None
-    
