@@ -1,7 +1,7 @@
 import pygame
 
 
-class PersonPanel:
+class InformationPanel:
 
     def __init__(self, width, height):
         self.WIDTH = width
@@ -184,4 +184,3 @@ class PersonPanel:
                     partners.append(parent)
 
         return partners
-

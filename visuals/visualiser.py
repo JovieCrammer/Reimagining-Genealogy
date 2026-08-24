@@ -6,7 +6,7 @@ from music.music_generator import person_to_notes
 from visuals.layout_engine import LayoutEngine
 from camera.camera import Camera
 from visuals.glyph import Glyph
-from visuals.person_panel import PersonPanel
+from visuals.information_panel import InformationPanel
 
 
 class Visualiser:
@@ -41,7 +41,7 @@ class Visualiser:
 
         self.camera = Camera(self.WIDTH, self.HEIGHT)
         self.selected_person = None
-        self.person_panel = PersonPanel(self.WIDTH, self.HEIGHT)
+        self.information_panel = InformationPanel(self.WIDTH, self.HEIGHT)
 
     def event_handler(self):
         for event in pygame.event.get():
@@ -141,7 +141,7 @@ class Visualiser:
                 node.draw(self.screen, self.camera)
 
         if self.selected_person is not None:
-            self.person_panel.draw(self.screen, self.selected_person)
+            self.information_panel.draw(self.screen, self.selected_person)
 
         pygame.display.flip()
 
